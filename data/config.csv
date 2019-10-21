@@ -1,0 +1,17 @@
+# Lines with '#' are ignored, these are called comments.
+# filename: the name of the file in the data folder
+# toc_name: the name to display in the TOC (table of contents) interface - capitalization matters
+# file_type: geojson, csv
+# geom_type: point, line, polygon
+# default_display: Should this be displayed on the loading of the page
+# toc_parent: where this should appear in the TOC 'catalogue'. 
+# line_colour: (defined in CSS file) thyme1, thyme2
+# line_width: any number
+# icon: path to icon image
+#
+# The heading below is used by the program to name the variables internally - DO NOT CHANGE THE HEADING BELOW
+#@ filename,toc_name,file_type,geom_type,toc_parent,default_display,line_colour,line_width,icon
+data/administrative/thyme_admin.geojson,THYME local authorities,geojson,polygon,Admin,yes,thyme2,2,
+data/administrative/thyme_region.geojson,THYME Region,geojson,polygon,Admin,yes,thyme1,5,
+data/livestock/pigs.csv,Pigs,csv,point,Livestock,yes,,,data/icons/pig.png
+data/livestock/poultry.csv,Poultry,csv,point,Livestock,yes,,,data/icons/poultry.png
