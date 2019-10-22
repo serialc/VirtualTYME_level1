@@ -13,5 +13,5 @@
 #@ filename,toc_name,file_type,geom_type,toc_parent,default_display,line_colour,line_width,icon
 data/administrative/thyme_admin.geojson,THYME local authorities,geojson,polygon,Admin,yes,thyme2,2,
 data/administrative/thyme_region.geojson,THYME Region,geojson,polygon,Admin,yes,thyme1,5,
-data/livestock/pigs.csv,Pigs,csv,point,Livestock,yes,,,data/icons/pig.png
-data/livestock/poultry.csv,Poultry,csv,point,Livestock,yes,,,data/icons/poultry.png
+data/livestock/pigs.csv,Pigs,csv,point,Livestock,no,,,data/icons/pig.png
+data/livestock/poultry.csv,Poultry,csv,point,Livestock,no,,,data/icons/poultry.png

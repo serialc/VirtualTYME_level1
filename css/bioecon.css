@@ -44,14 +44,14 @@ html, body, #mapid {
     top: 60px;
     }
 #messages {
-    z-index: 501;
+    z-index: 500;
     position: absolute;
     bottom: 20px;
     width: 30%;
     left: 50%;
     margin-left: -15%;
 }
-#warnings, #errors {
+.warning, .error {
     text-align: center;
     border-radius: 0.25rem;
     border: 1px solid transparent;
@@ -60,8 +60,57 @@ html, body, #mapid {
     background-color: #fff3cd;
     border-color: #ffeeba;
 }
-#errors {
+.error {
     color: #721c24;
     background-color: #f8d7da;
     border-color: #f5c6cb;
+}
+#toc {
+    z-index: 500;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.7);
+    top: 50px;
+    width: 300px;
+    height: calc(100% - 50px);
+    padding-top: 10px;
+}
+.toc_group, .toc_layer {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: .75rem 1.25rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: .75rem 1.25rem;
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+.toc_layer {
+    font-weight: normal;
+    font-size: 1rem;
+    margin-top: 0;
+    color: #383d41;
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+}
+
+.toc_group:hover  {
+    background-color: #bbd3ee;
+}
+.toc_layer:hover  {
+    background-color: #c6c8cb;
+}
+.hidden {
+    display: none;
+}
+.visible_layer {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.visible_layer:hover {
+    background-color: #c4ddca;
 }

@@ -41,27 +41,33 @@ VTR.get = function(filepath, funcall) {
 }
 
 VTR.msg = function(msg, type) {
-    var el;
+    var cont, popup;
 
     if( type != "error" && type != "warning" ) {
         VTR.msg("You requested an error message of an unknown designation/type: " + type, "error");
     }
 
-    el = document.getElementById(type + 's')
-    el.style.display = "";
-    el.innerHTML = msg;
-    setTimeout(function(){el.style.display="none"}, 10000);
+    cont = document.getElementById('messages');
+    popup = document.createElement("div");
+    popup.className = "warning";
+    popup.innerHTML = msg;
+    cont.appendChild(popup);
+
+    setTimeout(function(){cont.removeChild(popup)}, 10000);
 };
 
 VTR.parse_config = function(data) {
 
-    var line, parts, filename, tocname, layers, headings, i;
+    var line, parts, filename, tocname, layers, headings, i, toc;
 
     // populate object with layers from config file
     layers = {};
 
     // clean up the file end and split into lines
     data = data.trim('\n').split('\n');
+    
+    // Populate the TOC headings and fill in the layers
+    toc= {};
 
     for(linenum in data) {
         line = data[linenum];
@@ -91,39 +97,102 @@ VTR.parse_config = function(data) {
             layers[tocname][heading] = parts[i];
         }
 
+        // populate the TOC
+        if( !toc[layers[tocname].toc_parent] ) {
+            toc[layers[tocname].toc_parent] = [];
+        }
+        toc[layers[tocname].toc_parent].push({"name": tocname, "visible": layers[tocname].default_display});
+
         // get the data now and display on the map
         if( layers[tocname].default_display === "yes" ) {
             // this is displayed by default and should be loaded
 
-            VTR.get(layers[tocname].filename,
-                function(index){
-                    return function(data) { 
-                        var lay = VTR.layers[index];
-                        // This is the code that will display the map data
-                        
-                        if( lay.file_type === "geojson" ) {
-                            VTR.map_geojson_data(JSON.parse(data), lay.line_colour, lay.line_width);
-                        }
-
-                        if( lay.file_type === "csv" && lay.geom_type === "point" ) {
-                            VTR.map_rawcsv_point_data(data, lay.icon, lay.toc_parent, lay.toc_name);
-                        }
-                    };
-                }(tocname)
-            );
+            VTR.map_display_triage(layers[tocname]);
         }
     }
 
-    console.log(layers);
+
     // save the layers data to the global object
     VTR.layers = layers;
+    VTR.toc = toc;
+
+    VTR.create_TOC();
+
 };
 
-VTR.map_rawcsv_point_data = function(data, icon_path, toc_parent, toc_name) {
+VTR.find_layer = function(layer_name, parent_name) {
+    var lay;
+
+    for( lay in VTR.layers ) {
+        if( lay === layer_name && VTR.layers[lay].toc_parent === parent_name ) {
+            return VTR.layers[lay];
+        }
+    }
+    return false;
+};
+
+VTR.create_TOC = function() {
+    var grp, lay, layername, toc_el, toc, group_el, layer_el;
+    
+    toc = VTR.toc;
+    toc_el = document.getElementById('toc');
+
+    for(grp in toc) {
+        group_el = document.createElement('div');
+        group_el.className = "toc_group";
+        group_el.innerHTML = grp;
+        group_el.onclick = 
+            function(target) {
+                return function() {
+                    document.getElementById(target).classList.toggle('hidden');
+                };
+            }(grp + "_layers");
+        toc_el.appendChild(group_el);
+
+        // new group element to contain all the layers
+        group_el = document.createElement('div');
+        group_el.className = "hidden";
+        group_el.id = grp + "_layers";
+
+        for(lay in toc[grp]) {
+            layer = toc[grp][lay];
+            layer_el = document.createElement('div');
+            if( layer.visible === "yes" ) {
+                layer_el.className = "toc_layer visible_layer";
+            } else {
+                layer_el.className = "toc_layer";
+            }
+
+            layer_el.innerHTML = layer.name;
+            layer_el.onclick = 
+            function(this_layer, layer_el, this_grp) {
+                return function() {
+                    layer_el.classList.toggle('visible_layer');
+
+                    layer_record = VTR.find_layer(this_layer.name, this_grp);
+                    if( this_layer.visible === "no" ) {
+                        this_layer.visible = "yes";
+                        // load layer
+                        VTR.map_display_triage(layer_record);
+                    } else {
+                        this_layer.visible = "no";
+                        // remove layer from the map
+                        VTR.map_remove(layer_record);
+                    }
+                };
+            }(layer, layer_el, grp);
+            group_el.appendChild(layer_el);
+        }
+
+        toc_el.appendChild(group_el);
+    }
+};
+
+VTR.map_rawcsv_point_data = function(data, lay) {
 
     var lines, this_icon, heading, lat, lng, url, bname, pc, markers;
     
-    this_icon = new VTR.icon_class({iconUrl: icon_path}),
+    this_icon = new VTR.icon_class({iconUrl: lay.icon}),
     lines = data.trim('\n').split('\n');
 
     markers = [];
@@ -148,16 +217,51 @@ VTR.map_rawcsv_point_data = function(data, icon_path, toc_parent, toc_name) {
     }
 
     // add the markers to the global object
-    VTR.markers[toc_parent] = {toc_name: markers};
+    if( !VTR.markers[lay.toc_parent] ) {
+        VTR.markers[lay.toc_parent] = {};
+    }
+    VTR.markers[lay.toc_parent][lay.toc_name] = markers;
 };
 
-VTR.map_geojson_data = function(data, colour, line_width) {
+VTR.map_display_triage = function(lay) {
+
+    VTR.get(lay.filename,
+        function(data){
+            // This is the code that will display the map data
+            if( lay.file_type === "geojson" ) {
+                VTR.map_geojson_data(JSON.parse(data), lay);
+            }
+            if( lay.file_type === "csv" && lay.geom_type === "point" ) {
+                VTR.map_rawcsv_point_data(data, lay);
+            }
+        }
+    );
+
+};
+
+VTR.map_remove = function(lay) {
+    var i;
+
+    if( lay.file_type === "geojson" ) {
+        VTR.map.removeLayer(VTR.markers[lay.toc_parent][lay.toc_name]);
+    }
+    if( lay.geom_type === "point" ) {
+        for( i = 0; i < VTR.markers[lay.toc_parent][lay.toc_name].length; i++ ) {
+            VTR.map.removeLayer(VTR.markers[lay.toc_parent][lay.toc_name][i]);
+        }
+    }
+};
+
+VTR.map_geojson_data = function(data, lay) {
 
     // Add municipal bounds
-    L.geoJSON(data, {
+    if( !VTR.markers[lay.toc_parent] ) {
+        VTR.markers[lay.toc_parent] = {};
+    }
+    VTR.markers[lay.toc_parent][lay.toc_name] = L.geoJSON(data, {
         style: {
-            "color": VTR.colors[colour],
-            "weight": line_width,
+            "color": VTR.colors[lay.line_colour],
+            "weight": lay.line_width,
             "opacity": 0.5,
             "fill": false
         }}
@@ -169,15 +273,15 @@ VTR.init = function() {
     VTR.map = L.map('mapid', {
             attributionControl: false,
             zoomControl: false,
-            minZoom: VTR.zoom.min,
-            maxZoom: VTR.zoom.max
+    //        minZoom: VTR.zoom.min,
+    //        maxZoom: VTR.zoom.max
         }).setView(VTR.start_coord, VTR.start_zoom);
 
-    <!-- Need to update the map token below to my own! -->
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiY3lyaWxsZW1kYyIsImEiOiJjazIwamZ4cXIwMzN3M2hscmMxYjgxY2F5In0.0BmIVj6tTvXVd2BmmFo6Nw', {
+	L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiY3lyaWxsZW1kYyIsImEiOiJjazIwamZ4cXIwMzN3M2hscmMxYjgxY2F5In0.0BmIVj6tTvXVd2BmmFo6Nw",
+        {
         maxZoom: 18,
         id: 'mapbox.streets'
-    }).addTo(VTR.map);
+        }).addTo(VTR.map);
 
     // Set map bounds
     VTR.map.setMaxBounds( VTR.map_bounds );
@@ -192,9 +296,8 @@ VTR.init = function() {
     // customize zoom control location
     VTR.map.addControl( L.control.zoom({position: 'topright'}) )
 
-    // get config file
+    // get config file and display default layers, build TOC
     VTR.get('data/config.csv', VTR.parse_config);
-    
 };
 
 window.onload = VTR.init;
