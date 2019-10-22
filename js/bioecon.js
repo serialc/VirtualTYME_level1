@@ -2,7 +2,7 @@ VTR = {
     "start_coord": [54.17, -1.21],
     "start_zoom": 9,
     "map_bounds": new L.LatLngBounds(new L.LatLng(53, -3), new L.LatLng(55, 1)), // sw corner, ne corner
-    "zoom": {"min": 8, "max": 18},
+    "zoom": {"min": 8, "max": 15},
     "colors": {
         "thyme1": "#896ab3",
         "thyme2": "#9dbb6e"
@@ -61,13 +61,13 @@ VTR.parse_config = function(data) {
     var line, parts, filename, tocname, layers, headings, i, toc;
 
     // populate object with layers from config file
-    layers = {};
+    layers = [];
 
     // clean up the file end and split into lines
     data = data.trim('\n').split('\n');
     
     // Populate the TOC headings and fill in the layers
-    toc= {};
+    toc = {};
 
     for(linenum in data) {
         line = data[linenum];
@@ -89,25 +89,24 @@ VTR.parse_config = function(data) {
             console.log(parts);
         }
 
-        tocname = parts[1];
-        layers[tocname] = {}
+        layers[linenum] = {}
         // copy the data from table format to json
         for( i in headings ) {
             heading = headings[i];
-            layers[tocname][heading] = parts[i];
+            layers[linenum][heading] = parts[i];
         }
 
         // populate the TOC
-        if( !toc[layers[tocname].toc_parent] ) {
-            toc[layers[tocname].toc_parent] = [];
+        if( !toc[layers[linenum].toc_parent] ) {
+            toc[layers[linenum].toc_parent] = [];
         }
-        toc[layers[tocname].toc_parent].push({"name": tocname, "visible": layers[tocname].default_display});
+        toc[layers[linenum].toc_parent].push({"name": layers[linenum].toc_name, "visible": layers[linenum].default_display});
 
         // get the data now and display on the map
-        if( layers[tocname].default_display === "yes" ) {
+        if( layers[linenum].default_display === "yes" ) {
             // this is displayed by default and should be loaded
 
-            VTR.map_display_triage(layers[tocname]);
+            VTR.map_display_triage(layers[linenum]);
         }
     }
 
@@ -123,11 +122,12 @@ VTR.parse_config = function(data) {
 VTR.find_layer = function(layer_name, parent_name) {
     var lay;
 
-    for( lay in VTR.layers ) {
-        if( lay === layer_name && VTR.layers[lay].toc_parent === parent_name ) {
-            return VTR.layers[lay];
+    for( laynum in VTR.layers ) {
+        if( VTR.layers[laynum].toc_name === layer_name && VTR.layers[laynum].toc_parent === parent_name ) {
+            return VTR.layers[laynum];
         }
     }
+    VTR.msg("ERROR: Failed to find the layer '" + layer_name + "' in the group '" + parent_name +"'.", "error");
     return false;
 };
 
@@ -250,6 +250,7 @@ VTR.map_remove = function(lay) {
             VTR.map.removeLayer(VTR.markers[lay.toc_parent][lay.toc_name][i]);
         }
     }
+    delete VTR.markers[lay.toc_parent][lay.toc_name];
 };
 
 VTR.map_geojson_data = function(data, lay) {
@@ -273,8 +274,8 @@ VTR.init = function() {
     VTR.map = L.map('mapid', {
             attributionControl: false,
             zoomControl: false,
-    //        minZoom: VTR.zoom.min,
-    //        maxZoom: VTR.zoom.max
+            minZoom: VTR.zoom.min,
+            maxZoom: VTR.zoom.max
         }).setView(VTR.start_coord, VTR.start_zoom);
 
 	L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiY3lyaWxsZW1kYyIsImEiOiJjazIwamZ4cXIwMzN3M2hscmMxYjgxY2F5In0.0BmIVj6tTvXVd2BmmFo6Nw",

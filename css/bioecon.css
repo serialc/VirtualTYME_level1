@@ -73,6 +73,7 @@ html, body, #mapid {
     width: 300px;
     height: calc(100% - 50px);
     padding-top: 10px;
+    overflow-y: auto;
 }
 .toc_group, .toc_layer {
     font-size: 1.2rem;

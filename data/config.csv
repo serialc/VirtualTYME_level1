@@ -10,8 +10,50 @@
 # icon: path to icon image
 #
 # The heading below is used by the program to name the variables internally - DO NOT CHANGE THE HEADING BELOW
-#@ filename,toc_name,file_type,geom_type,toc_parent,default_display,line_colour,line_width,icon
-data/administrative/thyme_admin.geojson,THYME local authorities,geojson,polygon,Admin,yes,thyme2,2,
-data/administrative/thyme_region.geojson,THYME Region,geojson,polygon,Admin,yes,thyme1,5,
-data/livestock/pigs.csv,Pigs,csv,point,Livestock,no,,,data/icons/pig.png
-data/livestock/poultry.csv,Poultry,csv,point,Livestock,no,,,data/icons/poultry.png
+#@ filename,toc_parent,toc_name,file_type,geom_type,default_display,line_colour,line_width,icon
+data/administrative/thyme_admin.geojson,Admin,THYME local authorities,geojson,polygon,yes,thyme2,2,
+data/administrative/thyme_region.geojson,Admin,THYME Region,geojson,polygon,yes,thyme1,5,
+#
+data/livestock/buffaloes.csv,Livestock,Buffalo,csv,point,no,,,data/icons/buffalo.png
+data/livestock/dairy.csv,Livestock,Dairy,csv,point,no,,,data/icons/dairy.png
+data/livestock/horses.csv,Livestock,Horses,csv,point,no,,,data/icons/horse.png
+data/livestock/pigs.csv,Livestock,Pigs,csv,point,no,,,data/icons/pig.png
+data/livestock/poultry.csv,Livestock,Poultry,csv,point,no,,,data/icons/poultry.png
+data/livestock/sheep_goats.csv,Livestock,Sheep/Goats,csv,point,no,,,data/icons/goat.png
+data/livestock/other.csv,Livestock,Other,csv,point,no,,,data/icons/other.png
+#
+data/food producers/Animal production support activities.csv,Food producers,Animal production support activities,csv,point,no,,,data/icons/missing.png
+data/food producers/Bread & pastry goods cakes.csv,Food producers,Bread & pastry goods cakes,csv,point,no,,,data/icons/missing.png
+data/food producers/Cocoa choc & sugar confectionaries.csv,Food producers,Cocoa choc & sugar confectionaries,csv,point,no,,,data/icons/missing.png
+data/food producers/Condiments & seasonings.csv,Food producers,Condiments & seasonings,csv,point,no,,,data/icons/missing.png
+data/food producers/Dairy.csv,Food producers,Dairy,csv,point,no,,,data/icons/missing.png
+data/food producers/Fish processing preserving.csv,Food producers,Fish processing preserving,csv,point,no,,,data/icons/missing.png
+data/food producers/Grain mill products.csv,Food producers,Grain mill products,csv,point,no,,,data/icons/missing.png
+data/food producers/Homogenised dietetic food.csv,Food producers,Homogenised dietetic food,csv,point,no,,,data/icons/missing.png
+data/food producers/Ice cream.csv,Food producers,Ice cream,csv,point,no,,,data/icons/missing.png
+data/food producers/Margarine edible fats.csv,Food producers,Margarine edible fats,csv,point,no,,,data/icons/missing.png
+data/food producers/Meat poultry meat production.csv,Food producers,Meat poultry meat production,csv,point,no,,,data/icons/missing.png
+data/food producers/Meat processing preserving.csv,Food producers,Meat processing preserving,csv,point,no,,,data/icons/missing.png
+data/food producers/Oil fat manufacture.csv,Food producers,Oil fat manufacture,csv,point,no,,,data/icons/missing.png
+data/food producers/Other food products nec.csv,Food producers,Other food products nec,csv,point,no,,,data/icons/missing.png
+data/food producers/Pasta other farinaceous.csv,Food producers,Pasta other farinaceous,csv,point,no,,,data/icons/missing.png
+data/food producers/Post-harvest crop activities.csv,Food producers,Post-harvest crop activities,csv,point,no,,,data/icons/missing.png
+data/food producers/Potato processing preserving.csv,Food producers,Potato processing preserving,csv,point,no,,,data/icons/missing.png
+data/food producers/Poultry meat processing preserving.csv,Food producers,Poultry meat processing preserving,csv,point,no,,,data/icons/missing.png
+data/food producers/Prepared farm animals feeds.csv,Food producers,Prepared farm animals feeds,csv,point,no,,,data/icons/missing.png
+data/food producers/Prepared meals & dishes.csv,Food producers,Prepared meals & dishes,csv,point,no,,,data/icons/missing.png
+data/food producers/Prepared pet foods.csv,Food producers,Prepared pet foods,csv,point,no,,,data/icons/missing.png
+data/food producers/Pulp.csv,Food producers,Pulp,csv,point,no,,,data/icons/missing.png
+data/food producers/Rusks biscuits & preserved pastry.csv,Food producers,Rusks biscuits & preserved pastry,csv,point,no,,,data/icons/missing.png
+data/food producers/Starches & starch products.csv,Food producers,Starches & starch products,csv,point,no,,,data/icons/missing.png
+data/food producers/Sugar.csv,Food producers,Sugar,csv,point,no,,,data/icons/missing.png
+#
+data/drink producers/Beer.csv,Drink producers,Beer,csv,point,no,,,data/icons/missing.png
+data/drink producers/Beverage.csv,Drink producers,Beverage,csv,point,no,,,data/icons/missing.png
+data/drink producers/Cider.csv,Drink producers,Cider,csv,point,no,,,data/icons/missing.png
+data/drink producers/Fruit vegetable juice.csv,Drink producers,Fruit vegetable juice,csv,point,no,,,data/icons/missing.png
+data/drink producers/Malt.csv,Drink producers,Malt,csv,point,no,,,data/icons/missing.png
+data/drink producers/Soft drinks & waters.csv,Drink producers,Soft drinks & waters,csv,point,no,,,data/icons/missing.png
+data/drink producers/Spirits.csv,Drink producers,Spirits,csv,point,no,,,data/icons/missing.png
+data/drink producers/Tea & Coffee.csv,Drink producers,Tea & Coffee,csv,point,no,,,data/icons/missing.png
+data/drink producers/Wine.csv,Drink producers,Wine,csv,point,no,,,data/icons/missing.png
