@@ -14,6 +14,9 @@ split_by_subactivity <- function(source, destination) {
     name <- gsub(pattern = "  ", replacement = ' ', name)
     name <- gsub(pattern = ";", replacement = ' &', name)
     name <- gsub(pattern = " and ", replacement = ' & ', name)
+    
+    # Need to remove all commas from within data
+    
     print(name)
     write.table(x[,colnames(x) != "subactivity"], file = paste(sep='', destination, name, '.csv'), sep=',', quote = F, row.names = F)
   })
