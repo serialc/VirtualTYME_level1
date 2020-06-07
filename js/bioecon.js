@@ -1,4 +1,6 @@
-VTR = {
+"use strict";
+
+var VTR = {
     "start_coord": [54.17, -1.21],
     "start_zoom": 9,
     "map_bounds": new L.LatLngBounds(new L.LatLng(53, -3), new L.LatLng(55, 1)), // sw corner, ne corner
@@ -58,7 +60,7 @@ VTR.msg = function(msg, type) {
 
 VTR.parse_config = function(data) {
 
-    var line, parts, filename, tocname, layers, headings, i, toc;
+    let linenum, line, parts, filename, tocname, layers, headings, i, toc;
 
     // populate object with layers from config file
     layers = [];
@@ -92,7 +94,7 @@ VTR.parse_config = function(data) {
         layers[linenum] = {}
         // copy the data from table format to json
         for( i in headings ) {
-            heading = headings[i];
+            let heading = headings[i];
             layers[linenum][heading] = parts[i];
         }
 
@@ -155,7 +157,7 @@ VTR.create_TOC = function() {
         group_el.id = grp + "_layers";
 
         for(lay in toc[grp]) {
-            layer = toc[grp][lay];
+            let layer = toc[grp][lay];
             layer_el = document.createElement('div');
             if( layer.visible === "yes" ) {
                 layer_el.className = "toc_layer visible_layer";
@@ -278,11 +280,15 @@ VTR.init = function() {
             maxZoom: VTR.zoom.max
         }).setView(VTR.start_coord, VTR.start_zoom);
 
-	L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiY3lyaWxsZW1kYyIsImEiOiJjazIwamZ4cXIwMzN3M2hscmMxYjgxY2F5In0.0BmIVj6tTvXVd2BmmFo6Nw",
-        {
+    L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
+      {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
-        id: 'mapbox.streets'
-        }).addTo(VTR.map);
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'pk.eyJ1IjoiY3lyaWxsZW1kYyIsImEiOiJjazIwamZ4cXIwMzN3M2hscmMxYjgxY2F5In0.0BmIVj6tTvXVd2BmmFo6Nw'
+    }).addTo(VTR.map);
 
     // Set map bounds
     VTR.map.setMaxBounds( VTR.map_bounds );
